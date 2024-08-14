@@ -1,0 +1,46 @@
+
+State Machine - |top|current_state
+Name current_state.s_faceBox current_state.s_faceBox_start current_state.s_scale current_state.s_ii_gen_subwin current_state.s_ii_gen_subwin_RESET current_state.s_subwin_RESET current_state.s_ii_gen_init current_state.s_newScale_RESET current_state.s_CAPTURE current_state.s_CAPTURE_start current_state.s_RESET 
+current_state.s_RESET 0 0 0 0 0 0 0 0 0 0 0 
+current_state.s_CAPTURE_start 0 0 0 0 0 0 0 0 0 1 1 
+current_state.s_CAPTURE 0 0 0 0 0 0 0 0 1 0 1 
+current_state.s_newScale_RESET 0 0 0 0 0 0 0 1 0 0 1 
+current_state.s_ii_gen_init 0 0 0 0 0 0 1 0 0 0 1 
+current_state.s_subwin_RESET 0 0 0 0 0 1 0 0 0 0 1 
+current_state.s_ii_gen_subwin_RESET 0 0 0 0 1 0 0 0 0 0 1 
+current_state.s_ii_gen_subwin 0 0 0 1 0 0 0 0 0 0 1 
+current_state.s_scale 0 0 1 0 0 0 0 0 0 0 1 
+current_state.s_faceBox_start 0 1 0 0 0 0 0 0 0 0 1 
+current_state.s_faceBox 1 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |top|faceBox:faceBox_inst|current_state
+Name current_state.s_DONE current_state.s_check_box_out_count current_state.s_BOTTOM current_state.s_LEFT current_state.s_RIGHT current_state.s_TOP current_state.s_buff_setup current_state.s_setup_info_rdaddress current_state.s_RESET 
+current_state.s_RESET 0 0 0 0 0 0 0 0 0 
+current_state.s_setup_info_rdaddress 0 0 0 0 0 0 0 1 1 
+current_state.s_buff_setup 0 0 0 0 0 0 1 0 1 
+current_state.s_TOP 0 0 0 0 0 1 0 0 1 
+current_state.s_RIGHT 0 0 0 0 1 0 0 0 1 
+current_state.s_LEFT 0 0 0 1 0 0 0 0 1 
+current_state.s_BOTTOM 0 0 1 0 0 0 0 0 1 
+current_state.s_check_box_out_count 0 1 0 0 0 0 0 0 1 
+current_state.s_DONE 1 0 0 0 0 0 0 0 1 
+
+State Machine - |top|subwindow_top:subwin_top_inst|current_state
+Name current_state.s_DONE current_state.s_flagDone current_state.s_strongCompare current_state.s_latch_strongAccum current_state.s_latch_ii_reg current_state.s_latch_iix2_reg current_state.s_latch_RAM_address current_state.s_latch_ROM current_state.s_RESET 
+current_state.s_RESET 0 0 0 0 0 0 0 0 0 
+current_state.s_latch_ROM 0 0 0 0 0 0 0 1 1 
+current_state.s_latch_RAM_address 0 0 0 0 0 0 1 0 1 
+current_state.s_latch_iix2_reg 0 0 0 0 0 1 0 0 1 
+current_state.s_latch_ii_reg 0 0 0 0 1 0 0 0 1 
+current_state.s_latch_strongAccum 0 0 0 1 0 0 0 0 1 
+current_state.s_strongCompare 0 0 1 0 0 0 0 0 1 
+current_state.s_flagDone 0 1 0 0 0 0 0 0 1 
+current_state.s_DONE 1 0 0 0 0 0 0 0 1 
+
+State Machine - |top|ii_gen:ii_gen_inst|state
+Name state.s_DONE state.s_soft_reset state.s_latch_RAM_write state.s_latch_RAM_read state.s_RESET 
+state.s_RESET 0 0 0 0 0 
+state.s_latch_RAM_read 0 0 0 1 1 
+state.s_latch_RAM_write 0 0 1 0 1 
+state.s_soft_reset 0 1 0 0 1 
+state.s_DONE 1 0 0 0 1 

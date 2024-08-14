@@ -1,0 +1,838 @@
+--altsyncram ADDRESS_ACLR_B="NONE" ADDRESS_REG_B="CLOCK1" BYTE_SIZE=8 BYTEENA_ACLR_B="NONE" BYTEENA_REG_B="CLOCK1" CBX_DECLARE_ALL_CONNECTED_PORTS="OFF" CLOCK_ENABLE_CORE_A="USE_INPUT_CLKEN" CLOCK_ENABLE_CORE_B="USE_INPUT_CLKEN" CLOCK_ENABLE_INPUT_A="BYPASS" CLOCK_ENABLE_INPUT_B="BYPASS" CLOCK_ENABLE_OUTPUT_A="BYPASS" CLOCK_ENABLE_OUTPUT_B="BYPASS" CYCLONEII_M4K_COMPATIBILITY="ON" DEVICE_FAMILY="Cyclone IV E" ECC_PIPELINE_STAGE_ENABLED="FALSE" ENABLE_ECC="FALSE" IMPLEMENT_IN_LES="OFF" INDATA_ACLR_B="NONE" INDATA_REG_B="CLOCK1" INIT_FILE_LAYOUT="PORT_A" LOW_POWER_MODE="AUTO" MAXIMUM_DEPTH=0 NUMWORDS_A=8192 NUMWORDS_B=512 OPERATION_MODE="BIDIR_DUAL_PORT" OUTDATA_ACLR_A="NONE" OUTDATA_ACLR_B="NONE" OUTDATA_REG_A="UNREGISTERED" OUTDATA_REG_B="UNREGISTERED" POWER_UP_UNINITIALIZED="FALSE" RAM_BLOCK_TYPE="AUTO" RDCONTROL_ACLR_B="NONE" RDCONTROL_REG_B="CLOCK1" READ_DURING_WRITE_MODE_MIXED_PORTS="DONT_CARE" read_during_write_mode_port_a="NEW_DATA_NO_NBE_READ" read_during_write_mode_port_b="NEW_DATA_NO_NBE_READ" stratixiv_m144k_allow_dual_clocks="ON" WIDTH_A=20 WIDTH_B=320 WIDTH_BYTEENA_A=1 WIDTH_BYTEENA_B=1 WIDTH_ECCSTATUS=3 WIDTHAD_A=13 WIDTHAD_B=9 WRCONTROL_ACLR_B="NONE" WRCONTROL_WRADDRESS_REG_B="CLOCK1" address_a address_b clock0 clock1 data_a data_b q_a q_b wren_a wren_b CARRY_CHAIN="MANUAL" CARRY_CHAIN_LENGTH=48
+--VERSION_BEGIN 18.1 cbx_altera_syncram_nd_impl 2018:09:12:13:04:24:SJ cbx_altsyncram 2018:09:12:13:04:24:SJ cbx_cycloneii 2018:09:12:13:04:24:SJ cbx_lpm_add_sub 2018:09:12:13:04:24:SJ cbx_lpm_compare 2018:09:12:13:04:24:SJ cbx_lpm_decode 2018:09:12:13:04:24:SJ cbx_lpm_mux 2018:09:12:13:04:24:SJ cbx_mgl 2018:09:12:13:10:36:SJ cbx_nadder 2018:09:12:13:04:24:SJ cbx_stratix 2018:09:12:13:04:24:SJ cbx_stratixii 2018:09:12:13:04:24:SJ cbx_stratixiii 2018:09:12:13:04:24:SJ cbx_stratixv 2018:09:12:13:04:24:SJ cbx_util_mgl 2018:09:12:13:04:24:SJ  VERSION_END
+
+
+-- Copyright (C) 2018  Intel Corporation. All rights reserved.
+--  Your use of Intel Corporation's design tools, logic functions 
+--  and other software and tools, and its AMPP partner logic 
+--  functions, and any output files from any of the foregoing 
+--  (including device programming or simulation files), and any 
+--  associated documentation or information are expressly subject 
+--  to the terms and conditions of the Intel Program License 
+--  Subscription Agreement, the Intel Quartus Prime License Agreement,
+--  the Intel FPGA IP License Agreement, or other applicable license
+--  agreement, including, without limitation, that your use is for
+--  the sole purpose of programming logic devices manufactured by
+--  Intel and sold by Intel or its authorized distributors.  Please
+--  refer to the applicable agreement for further details.
+
+
+FUNCTION cycloneive_ram_block (clk0, clk1, clr0, clr1, ena0, ena1, ena2, ena3, portaaddr[PORT_A_ADDRESS_WIDTH-1..0], portaaddrstall, portabyteenamasks[PORT_A_BYTE_ENABLE_MASK_WIDTH-1..0], portadatain[PORT_A_DATA_WIDTH-1..0], portare, portawe, portbaddr[PORT_B_ADDRESS_WIDTH-1..0], portbaddrstall, portbbyteenamasks[PORT_B_BYTE_ENABLE_MASK_WIDTH-1..0], portbdatain[PORT_B_DATA_WIDTH-1..0], portbre, portbwe)
+WITH ( CLK0_CORE_CLOCK_ENABLE, CLK0_INPUT_CLOCK_ENABLE, CLK0_OUTPUT_CLOCK_ENABLE, CLK1_CORE_CLOCK_ENABLE, CLK1_INPUT_CLOCK_ENABLE, CLK1_OUTPUT_CLOCK_ENABLE, CONNECTIVITY_CHECKING, DATA_INTERLEAVE_OFFSET_IN_BITS, DATA_INTERLEAVE_WIDTH_IN_BITS, DONT_POWER_OPTIMIZE, INIT_FILE, INIT_FILE_LAYOUT, init_file_restructured, LOGICAL_RAM_NAME, mem_init0, mem_init1, mem_init2, mem_init3, mem_init4, MIXED_PORT_FEED_THROUGH_MODE, OPERATION_MODE, PORT_A_ADDRESS_CLEAR, PORT_A_ADDRESS_WIDTH = 1, PORT_A_BYTE_ENABLE_MASK_WIDTH = 1, PORT_A_BYTE_SIZE, PORT_A_DATA_OUT_CLEAR, PORT_A_DATA_OUT_CLOCK, PORT_A_DATA_WIDTH = 1, PORT_A_FIRST_ADDRESS, PORT_A_FIRST_BIT_NUMBER, PORT_A_LAST_ADDRESS, PORT_A_LOGICAL_RAM_DEPTH, PORT_A_LOGICAL_RAM_WIDTH, PORT_A_READ_DURING_WRITE_MODE, PORT_B_ADDRESS_CLEAR, PORT_B_ADDRESS_CLOCK, PORT_B_ADDRESS_WIDTH = 1, PORT_B_BYTE_ENABLE_CLOCK, PORT_B_BYTE_ENABLE_MASK_WIDTH = 1, PORT_B_BYTE_SIZE, PORT_B_DATA_IN_CLOCK, PORT_B_DATA_OUT_CLEAR, PORT_B_DATA_OUT_CLOCK, PORT_B_DATA_WIDTH = 1, PORT_B_FIRST_ADDRESS, PORT_B_FIRST_BIT_NUMBER, PORT_B_LAST_ADDRESS, PORT_B_LOGICAL_RAM_DEPTH, PORT_B_LOGICAL_RAM_WIDTH, PORT_B_READ_DURING_WRITE_MODE, PORT_B_READ_ENABLE_CLOCK, PORT_B_WRITE_ENABLE_CLOCK, POWER_UP_UNINITIALIZED, RAM_BLOCK_TYPE, SAFE_WRITE, WIDTH_ECCSTATUS)
+RETURNS ( portadataout[PORT_A_DATA_WIDTH-1..0], portbdataout[PORT_B_DATA_WIDTH-1..0]);
+
+--synthesis_resources = M9K 20 
+OPTIONS ALTERA_INTERNAL_OPTION = "OPTIMIZE_POWER_DURING_SYNTHESIS=NORMAL_COMPILATION";
+
+SUBDESIGN altsyncram_7kr3
+( 
+	address_a[12..0]	:	input;
+	address_b[8..0]	:	input;
+	clock0	:	input;
+	clock1	:	input;
+	data_a[19..0]	:	input;
+	data_b[319..0]	:	input;
+	q_a[19..0]	:	output;
+	q_b[319..0]	:	output;
+	wren_a	:	input;
+	wren_b	:	input;
+) 
+VARIABLE 
+	ram_block1a0 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 0,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 0,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a1 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 1,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 1,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a2 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 2,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 2,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a3 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 3,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 3,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a4 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 4,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 4,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a5 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 5,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 5,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a6 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 6,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 6,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a7 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 7,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 7,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a8 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 8,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 8,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a9 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 9,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 9,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a10 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 10,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 10,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a11 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 11,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 11,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a12 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 12,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 12,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a13 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 13,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 13,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a14 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 14,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 14,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a15 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 15,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 15,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a16 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 16,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 16,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a17 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 17,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 17,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a18 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 18,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 18,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	ram_block1a19 : cycloneive_ram_block
+		WITH (
+			CLK0_CORE_CLOCK_ENABLE = "none",
+			CLK0_INPUT_CLOCK_ENABLE = "none",
+			CLK1_CORE_CLOCK_ENABLE = "none",
+			CLK1_INPUT_CLOCK_ENABLE = "none",
+			CONNECTIVITY_CHECKING = "OFF",
+			DATA_INTERLEAVE_OFFSET_IN_BITS = 20,
+			DATA_INTERLEAVE_WIDTH_IN_BITS = 1,
+			LOGICAL_RAM_NAME = "ALTSYNCRAM",
+			MIXED_PORT_FEED_THROUGH_MODE = "dont_care",
+			OPERATION_MODE = "bidir_dual_port",
+			PORT_A_ADDRESS_WIDTH = 13,
+			PORT_A_DATA_OUT_CLEAR = "none",
+			PORT_A_DATA_WIDTH = 1,
+			PORT_A_FIRST_ADDRESS = 0,
+			PORT_A_FIRST_BIT_NUMBER = 19,
+			PORT_A_LAST_ADDRESS = 8191,
+			PORT_A_LOGICAL_RAM_DEPTH = 8192,
+			PORT_A_LOGICAL_RAM_WIDTH = 20,
+			PORT_A_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_ADDRESS_CLOCK = "clock1",
+			PORT_B_ADDRESS_WIDTH = 9,
+			PORT_B_DATA_IN_CLOCK = "clock1",
+			PORT_B_DATA_OUT_CLEAR = "none",
+			PORT_B_DATA_WIDTH = 16,
+			PORT_B_FIRST_ADDRESS = 0,
+			PORT_B_FIRST_BIT_NUMBER = 19,
+			PORT_B_LAST_ADDRESS = 511,
+			PORT_B_LOGICAL_RAM_DEPTH = 512,
+			PORT_B_LOGICAL_RAM_WIDTH = 320,
+			PORT_B_READ_DURING_WRITE_MODE = "new_data_no_nbe_read",
+			PORT_B_READ_ENABLE_CLOCK = "clock1",
+			PORT_B_WRITE_ENABLE_CLOCK = "clock1",
+			POWER_UP_UNINITIALIZED = "false",
+			RAM_BLOCK_TYPE = "AUTO"
+		);
+	address_a_wire[12..0]	: WIRE;
+	address_b_wire[8..0]	: WIRE;
+
+BEGIN 
+	ram_block1a[19..0].clk0 = clock0;
+	ram_block1a[19..0].clk1 = clock1;
+	ram_block1a[19..0].portaaddr[] = ( address_a_wire[12..0]);
+	ram_block1a[0].portadatain[] = ( data_a[0..0]);
+	ram_block1a[1].portadatain[] = ( data_a[1..1]);
+	ram_block1a[2].portadatain[] = ( data_a[2..2]);
+	ram_block1a[3].portadatain[] = ( data_a[3..3]);
+	ram_block1a[4].portadatain[] = ( data_a[4..4]);
+	ram_block1a[5].portadatain[] = ( data_a[5..5]);
+	ram_block1a[6].portadatain[] = ( data_a[6..6]);
+	ram_block1a[7].portadatain[] = ( data_a[7..7]);
+	ram_block1a[8].portadatain[] = ( data_a[8..8]);
+	ram_block1a[9].portadatain[] = ( data_a[9..9]);
+	ram_block1a[10].portadatain[] = ( data_a[10..10]);
+	ram_block1a[11].portadatain[] = ( data_a[11..11]);
+	ram_block1a[12].portadatain[] = ( data_a[12..12]);
+	ram_block1a[13].portadatain[] = ( data_a[13..13]);
+	ram_block1a[14].portadatain[] = ( data_a[14..14]);
+	ram_block1a[15].portadatain[] = ( data_a[15..15]);
+	ram_block1a[16].portadatain[] = ( data_a[16..16]);
+	ram_block1a[17].portadatain[] = ( data_a[17..17]);
+	ram_block1a[18].portadatain[] = ( data_a[18..18]);
+	ram_block1a[19].portadatain[] = ( data_a[19..19]);
+	ram_block1a[19..0].portare = B"11111111111111111111";
+	ram_block1a[19..0].portawe = wren_a;
+	ram_block1a[19..0].portbaddr[] = ( address_b_wire[8..0]);
+	ram_block1a[0].portbdatain[] = ( data_b[300..300], data_b[280..280], data_b[260..260], data_b[240..240], data_b[220..220], data_b[200..200], data_b[180..180], data_b[160..160], data_b[140..140], data_b[120..120], data_b[100..100], data_b[80..80], data_b[60..60], data_b[40..40], data_b[20..20], data_b[0..0]);
+	ram_block1a[1].portbdatain[] = ( data_b[301..301], data_b[281..281], data_b[261..261], data_b[241..241], data_b[221..221], data_b[201..201], data_b[181..181], data_b[161..161], data_b[141..141], data_b[121..121], data_b[101..101], data_b[81..81], data_b[61..61], data_b[41..41], data_b[21..21], data_b[1..1]);
+	ram_block1a[2].portbdatain[] = ( data_b[302..302], data_b[282..282], data_b[262..262], data_b[242..242], data_b[222..222], data_b[202..202], data_b[182..182], data_b[162..162], data_b[142..142], data_b[122..122], data_b[102..102], data_b[82..82], data_b[62..62], data_b[42..42], data_b[22..22], data_b[2..2]);
+	ram_block1a[3].portbdatain[] = ( data_b[303..303], data_b[283..283], data_b[263..263], data_b[243..243], data_b[223..223], data_b[203..203], data_b[183..183], data_b[163..163], data_b[143..143], data_b[123..123], data_b[103..103], data_b[83..83], data_b[63..63], data_b[43..43], data_b[23..23], data_b[3..3]);
+	ram_block1a[4].portbdatain[] = ( data_b[304..304], data_b[284..284], data_b[264..264], data_b[244..244], data_b[224..224], data_b[204..204], data_b[184..184], data_b[164..164], data_b[144..144], data_b[124..124], data_b[104..104], data_b[84..84], data_b[64..64], data_b[44..44], data_b[24..24], data_b[4..4]);
+	ram_block1a[5].portbdatain[] = ( data_b[305..305], data_b[285..285], data_b[265..265], data_b[245..245], data_b[225..225], data_b[205..205], data_b[185..185], data_b[165..165], data_b[145..145], data_b[125..125], data_b[105..105], data_b[85..85], data_b[65..65], data_b[45..45], data_b[25..25], data_b[5..5]);
+	ram_block1a[6].portbdatain[] = ( data_b[306..306], data_b[286..286], data_b[266..266], data_b[246..246], data_b[226..226], data_b[206..206], data_b[186..186], data_b[166..166], data_b[146..146], data_b[126..126], data_b[106..106], data_b[86..86], data_b[66..66], data_b[46..46], data_b[26..26], data_b[6..6]);
+	ram_block1a[7].portbdatain[] = ( data_b[307..307], data_b[287..287], data_b[267..267], data_b[247..247], data_b[227..227], data_b[207..207], data_b[187..187], data_b[167..167], data_b[147..147], data_b[127..127], data_b[107..107], data_b[87..87], data_b[67..67], data_b[47..47], data_b[27..27], data_b[7..7]);
+	ram_block1a[8].portbdatain[] = ( data_b[308..308], data_b[288..288], data_b[268..268], data_b[248..248], data_b[228..228], data_b[208..208], data_b[188..188], data_b[168..168], data_b[148..148], data_b[128..128], data_b[108..108], data_b[88..88], data_b[68..68], data_b[48..48], data_b[28..28], data_b[8..8]);
+	ram_block1a[9].portbdatain[] = ( data_b[309..309], data_b[289..289], data_b[269..269], data_b[249..249], data_b[229..229], data_b[209..209], data_b[189..189], data_b[169..169], data_b[149..149], data_b[129..129], data_b[109..109], data_b[89..89], data_b[69..69], data_b[49..49], data_b[29..29], data_b[9..9]);
+	ram_block1a[10].portbdatain[] = ( data_b[310..310], data_b[290..290], data_b[270..270], data_b[250..250], data_b[230..230], data_b[210..210], data_b[190..190], data_b[170..170], data_b[150..150], data_b[130..130], data_b[110..110], data_b[90..90], data_b[70..70], data_b[50..50], data_b[30..30], data_b[10..10]);
+	ram_block1a[11].portbdatain[] = ( data_b[311..311], data_b[291..291], data_b[271..271], data_b[251..251], data_b[231..231], data_b[211..211], data_b[191..191], data_b[171..171], data_b[151..151], data_b[131..131], data_b[111..111], data_b[91..91], data_b[71..71], data_b[51..51], data_b[31..31], data_b[11..11]);
+	ram_block1a[12].portbdatain[] = ( data_b[312..312], data_b[292..292], data_b[272..272], data_b[252..252], data_b[232..232], data_b[212..212], data_b[192..192], data_b[172..172], data_b[152..152], data_b[132..132], data_b[112..112], data_b[92..92], data_b[72..72], data_b[52..52], data_b[32..32], data_b[12..12]);
+	ram_block1a[13].portbdatain[] = ( data_b[313..313], data_b[293..293], data_b[273..273], data_b[253..253], data_b[233..233], data_b[213..213], data_b[193..193], data_b[173..173], data_b[153..153], data_b[133..133], data_b[113..113], data_b[93..93], data_b[73..73], data_b[53..53], data_b[33..33], data_b[13..13]);
+	ram_block1a[14].portbdatain[] = ( data_b[314..314], data_b[294..294], data_b[274..274], data_b[254..254], data_b[234..234], data_b[214..214], data_b[194..194], data_b[174..174], data_b[154..154], data_b[134..134], data_b[114..114], data_b[94..94], data_b[74..74], data_b[54..54], data_b[34..34], data_b[14..14]);
+	ram_block1a[15].portbdatain[] = ( data_b[315..315], data_b[295..295], data_b[275..275], data_b[255..255], data_b[235..235], data_b[215..215], data_b[195..195], data_b[175..175], data_b[155..155], data_b[135..135], data_b[115..115], data_b[95..95], data_b[75..75], data_b[55..55], data_b[35..35], data_b[15..15]);
+	ram_block1a[16].portbdatain[] = ( data_b[316..316], data_b[296..296], data_b[276..276], data_b[256..256], data_b[236..236], data_b[216..216], data_b[196..196], data_b[176..176], data_b[156..156], data_b[136..136], data_b[116..116], data_b[96..96], data_b[76..76], data_b[56..56], data_b[36..36], data_b[16..16]);
+	ram_block1a[17].portbdatain[] = ( data_b[317..317], data_b[297..297], data_b[277..277], data_b[257..257], data_b[237..237], data_b[217..217], data_b[197..197], data_b[177..177], data_b[157..157], data_b[137..137], data_b[117..117], data_b[97..97], data_b[77..77], data_b[57..57], data_b[37..37], data_b[17..17]);
+	ram_block1a[18].portbdatain[] = ( data_b[318..318], data_b[298..298], data_b[278..278], data_b[258..258], data_b[238..238], data_b[218..218], data_b[198..198], data_b[178..178], data_b[158..158], data_b[138..138], data_b[118..118], data_b[98..98], data_b[78..78], data_b[58..58], data_b[38..38], data_b[18..18]);
+	ram_block1a[19].portbdatain[] = ( data_b[319..319], data_b[299..299], data_b[279..279], data_b[259..259], data_b[239..239], data_b[219..219], data_b[199..199], data_b[179..179], data_b[159..159], data_b[139..139], data_b[119..119], data_b[99..99], data_b[79..79], data_b[59..59], data_b[39..39], data_b[19..19]);
+	ram_block1a[19..0].portbre = B"11111111111111111111";
+	ram_block1a[19..0].portbwe = wren_b;
+	address_a_wire[] = address_a[];
+	address_b_wire[] = address_b[];
+	q_a[] = ( ram_block1a[19..0].portadataout[0..0]);
+	q_b[] = ( ram_block1a[19..0].portbdataout[15..15], ram_block1a[19..0].portbdataout[14..14], ram_block1a[19..0].portbdataout[13..13], ram_block1a[19..0].portbdataout[12..12], ram_block1a[19..0].portbdataout[11..11], ram_block1a[19..0].portbdataout[10..10], ram_block1a[19..0].portbdataout[9..9], ram_block1a[19..0].portbdataout[8..8], ram_block1a[19..0].portbdataout[7..7], ram_block1a[19..0].portbdataout[6..6], ram_block1a[19..0].portbdataout[5..5], ram_block1a[19..0].portbdataout[4..4], ram_block1a[19..0].portbdataout[3..3], ram_block1a[19..0].portbdataout[2..2], ram_block1a[19..0].portbdataout[1..1], ram_block1a[19..0].portbdataout[0..0]);
+END;
+--VALID FILE

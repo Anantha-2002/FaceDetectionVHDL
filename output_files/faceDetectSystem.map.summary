@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Tue Aug 13 19:28:18 2024
+Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+Revision Name : faceDetectSystem
+Top-level Entity Name : top
+Family : Cyclone IV E
+Total logic elements : 37,459
+    Total combinational functions : 29,082
+    Dedicated logic registers : 16,113
+Total registers : 16113
+Total pins : 56
+Total virtual pins : 0
+Total memory bits : 2,175,501
+Embedded Multiplier 9-bit elements : 369
+Total PLLs : 1
