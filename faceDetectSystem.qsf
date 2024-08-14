@@ -1,0 +1,185 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+# Your use of Altera Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Altera Program License 
+# Subscription Agreement, the Altera Quartus Prime License Agreement,
+# the Altera MegaCore Function License Agreement, or other 
+# applicable license agreement, including, without limitation, 
+# that your use is for the sole purpose of programming logic 
+# devices manufactured by Altera and sold by Altera or its 
+# authorized distributors.  Please refer to the applicable 
+# agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
+# Date created = 20:33:47  February 07, 2016
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		faceDetectSystem_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE115F29C7
+set_global_assignment -name TOP_LEVEL_ENTITY top
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 15.1.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "20:33:47  FEBRUARY 07, 2016"
+set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Lite Edition"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
+set_global_assignment -name NOMINAL_CORE_SUPPLY_VOLTAGE 1.2V
+set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (VHDL)"
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulation
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
+set_location_assignment PIN_Y2 -to clk_50
+set_location_assignment PIN_F19 -to LED_config_finished
+set_location_assignment PIN_G19 -to LED_dll_locked
+set_location_assignment PIN_AE16 -to ov7670_data[7]
+set_location_assignment PIN_AD21 -to ov7670_data[6]
+set_location_assignment PIN_Y16 -to ov7670_data[5]
+set_location_assignment PIN_AC21 -to ov7670_data[4]
+set_location_assignment PIN_Y17 -to ov7670_data[3]
+set_location_assignment PIN_AB21 -to ov7670_data[2]
+set_location_assignment PIN_AC15 -to ov7670_data[1]
+set_location_assignment PIN_AB22 -to ov7670_data[0]
+set_location_assignment PIN_AC22 -to ov7670_href
+set_location_assignment PIN_AC19 -to ov7670_pclk
+set_location_assignment PIN_AD19 -to ov7670_pwdn
+set_location_assignment PIN_AF15 -to ov7670_reset
+set_location_assignment PIN_AF24 -to ov7670_sioc
+set_location_assignment PIN_AE21 -to ov7670_siod
+set_location_assignment PIN_AF25 -to ov7670_vsync
+set_location_assignment PIN_AF16 -to ov7670_xclk
+set_location_assignment PIN_Y24 -to slide_sw_resend_reg_values
+set_location_assignment PIN_D12 -to vga_b[7]
+set_location_assignment PIN_D11 -to vga_b[6]
+set_location_assignment PIN_C12 -to vga_b[5]
+set_location_assignment PIN_A11 -to vga_b[4]
+set_location_assignment PIN_B11 -to vga_b[3]
+set_location_assignment PIN_C11 -to vga_b[2]
+set_location_assignment PIN_A10 -to vga_b[1]
+set_location_assignment PIN_B10 -to vga_b[0]
+set_location_assignment PIN_F11 -to vga_blank_N
+set_location_assignment PIN_A12 -to vga_CLK
+set_location_assignment PIN_C9 -to vga_g[7]
+set_location_assignment PIN_F10 -to vga_g[6]
+set_location_assignment PIN_B8 -to vga_g[5]
+set_location_assignment PIN_C8 -to vga_g[4]
+set_location_assignment PIN_H12 -to vga_g[3]
+set_location_assignment PIN_F8 -to vga_g[2]
+set_location_assignment PIN_G11 -to vga_g[1]
+set_location_assignment PIN_G8 -to vga_g[0]
+set_location_assignment PIN_G13 -to vga_hsync
+set_location_assignment PIN_H10 -to vga_r[7]
+set_location_assignment PIN_H8 -to vga_r[6]
+set_location_assignment PIN_J12 -to vga_r[5]
+set_location_assignment PIN_G10 -to vga_r[4]
+set_location_assignment PIN_F12 -to vga_r[3]
+set_location_assignment PIN_D10 -to vga_r[2]
+set_location_assignment PIN_E11 -to vga_r[1]
+set_location_assignment PIN_E12 -to vga_r[0]
+set_location_assignment PIN_C10 -to vga_sync_N
+set_location_assignment PIN_C13 -to vga_vsync
+set_location_assignment PIN_Y23 -to slide_sw_RESET
+set_location_assignment PIN_AG26 -to ii_gen_done
+set_location_assignment PIN_AF26 -to subwin_done
+set_location_assignment PIN_AE24 -to faceBox_done
+set_location_assignment PIN_AH23 -to measure_performance
+set_global_assignment -name OPTIMIZATION_MODE BALANCED
+set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS NOT_USED -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH testBench -section_id eda_simulation
+set_global_assignment -name EDA_TEST_BENCH_NAME testBench -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id testBench
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "50 ps" -section_id testBench
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME testBench -section_id testBench
+set_global_assignment -name EDA_TEST_BENCH_FILE testBench.vhd -section_id testBench
+set_location_assignment PIN_M23 -to btn_capture
+set_location_assignment PIN_AA22 -to slide_sw_capture_mode
+set_global_assignment -name SDC_FILE faceDetectSystem.out.sdc
+set_global_assignment -name SRAM_OBJECT_FILE output_files/faceDetectSystem.sof
+set_global_assignment -name VHDL_FILE component_package.vhd
+set_global_assignment -name VHDL_FILE top.vhd
+set_global_assignment -name QIP_FILE my_altpll.qip
+set_global_assignment -name VHDL_FILE debounce.vhd
+set_global_assignment -name VHDL_FILE RGB.vhd
+set_global_assignment -name VHDL_FILE i2c_sender.vhd
+set_global_assignment -name VHDL_FILE ov7670_registers.vhd
+set_global_assignment -name VHDL_FILE ov7670_controller.vhd
+set_global_assignment -name VHDL_FILE ov7670_capture.vhd
+set_global_assignment -name VHDL_FILE address_Generator.vhd
+set_global_assignment -name VHDL_FILE vga.vhd
+set_global_assignment -name VHDL_FILE ii_gen.vhd
+set_global_assignment -name VHDL_FILE RGB2GREY.vhd
+set_global_assignment -name QIP_FILE image_frame_buffer.qip
+set_global_assignment -name QIP_FILE ii_buffer.qip
+set_global_assignment -name QIP_FILE iix2_buffer.qip
+set_global_assignment -name VHDL_FILE parallel_dataPath_mux.vhd
+set_global_assignment -name VHDL_FILE mux_std_logic_2_1.vhd
+set_global_assignment -name VHDL_FILE mux_2_1.vhd
+set_global_assignment -name VHDL_FILE demux_1_2.vhd
+set_global_assignment -name VHDL_FILE counter.vhd
+set_global_assignment -name VHDL_FILE counter2.vhd
+set_global_assignment -name VHDL_FILE ram.vhd
+set_global_assignment -name VHDL_FILE subwindow_top.vhd
+set_global_assignment -name VHDL_FILE subwindow.vhd
+set_global_assignment -name VHDL_FILE pixel_offset.vhd
+set_global_assignment -name VHDL_FILE ii_address_decoder.vhd
+set_global_assignment -name VHDL_FILE ii_address_calc.vhd
+set_global_assignment -name VHDL_FILE ii_address_mux.vhd
+set_global_assignment -name VHDL_FILE iix2_address_decoder.vhd
+set_global_assignment -name VHDL_FILE var_norm_calc.vhd
+set_global_assignment -name QIP_FILE altsqrt_varianceCalc.qip
+set_global_assignment -name VHDL_FILE rect_mux.vhd
+set_global_assignment -name VHDL_FILE register_file.vhd
+set_global_assignment -name VHDL_FILE register_file2.vhd
+set_global_assignment -name VHDL_FILE feature_calc.vhd
+set_global_assignment -name VHDL_FILE rect_calc.vhd
+set_global_assignment -name VHDL_FILE faceBox.vhd
+set_global_assignment -name QIP_FILE faceBox_buff.qip
+set_global_assignment -name MIF_FILE y_rect2.mif
+set_global_assignment -name MIF_FILE y_rect1.mif
+set_global_assignment -name MIF_FILE y_rect0.mif
+set_global_assignment -name MIF_FILE x_rect2.mif
+set_global_assignment -name MIF_FILE x_rect1.mif
+set_global_assignment -name MIF_FILE x_rect0.mif
+set_global_assignment -name MIF_FILE weight2.mif
+set_global_assignment -name MIF_FILE weight1.mif
+set_global_assignment -name MIF_FILE weight0.mif
+set_global_assignment -name MIF_FILE weakThresh.mif
+set_global_assignment -name MIF_FILE weakStageNum.mif
+set_global_assignment -name MIF_FILE w_rect2.mif
+set_global_assignment -name MIF_FILE w_rect1.mif
+set_global_assignment -name MIF_FILE w_rect0.mif
+set_global_assignment -name MIF_FILE strongThresh.mif
+set_global_assignment -name MIF_FILE right_tree.mif
+set_global_assignment -name MIF_FILE left_tree.mif
+set_global_assignment -name MIF_FILE h_rect2.mif
+set_global_assignment -name MIF_FILE h_rect1.mif
+set_global_assignment -name MIF_FILE h_rect0.mif
+set_global_assignment -name HEX_FILE "test2-faceGrid96-320x240_greyImage_dec.hex"
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
